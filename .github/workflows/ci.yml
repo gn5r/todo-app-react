@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  workflow_call:
+  push:
+    paths-ignore:
+      - ".github/**"
+      - "README.md"
+    branches-ignore:
+      - main
+      - dev
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        uses: actions/cache@v4
+        id: cache_dependencies
+        env:
+          cache-name: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
+      - run: yarn --frozen-lockfile --non-interactive
+
+      - name: Run lint
+        run: yarn run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        uses: actions/cache@v4
+        id: cache_dependencies
+        env:
+          cache-name: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}
+      - run: yarn --frozen-lockfile --non-interactive
+
+      - name: Run unit test
+        run: yarn run test:unit
