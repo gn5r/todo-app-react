@@ -1,0 +1,3 @@
+{
+  "**/*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}": ["yarn run lint", "yarn run lint:fix"]
+}
